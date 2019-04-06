@@ -1,8 +1,11 @@
-#!/usr/bin/env python
-""" Make a new blog post given a title
+""" Utilities to support commands working on Pelican files
 """
 
-from os.path import join as pjoin, split as psplit, abspath, dirname, isfile
+import sys
+import os
+from os import environ  as env
+from os.path import join as pjoin, abspath
+import shlex
 import re
 
 
@@ -17,9 +20,22 @@ def _get_conf(path):
     return conf
 
 
-INPUTDIR = abspath(pjoin(dirname(__file__), '..'))
+def cmd2list(cmd):
+    if sys.platform == 'win32':
+        return [cmd]
+    return shlex.split(cmd)
+
+
+INPUTDIR = abspath(os.getcwd())
 CONF = _get_conf(INPUTDIR)
 OUTPUTDIR = pjoin(INPUTDIR, CONF['PATH'])
+if not 'DEFAULT_EXT' in CONF:
+    CONF['DEFAULT_EXT'] = 'md'
+if not 'EDIT_CMD' in CONF:
+    editor = env.get("GUI_EDITOR")
+    if editor is None:
+        editor = env.get("EDITOR")
+    CONF['EDIT_CMD'] = None if editor is None else cmd2list(editor)
 
 
 def title2slug(title):

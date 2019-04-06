@@ -13,4 +13,4 @@ requires = [
 ]
 
 [tool.flit.scripts]
-pt-newpost = "pelitools.commands:newpost"
+pt-newpost = "pelitools.commands:newpost_cmd"
