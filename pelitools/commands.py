@@ -38,10 +38,15 @@ def newpost_cmd():
         "-e", "--edit", action='store_true',
         help="Whether to edit the file")
     parser.add_argument(
+        "-s", "--stage", action='store_true',
+        help="Whether to stage the file with Git")
+    parser.add_argument(
         "-x", "--ext", default=CONF['DEFAULT_EXT'],
         help="Extension for post")
     args = parser.parse_args()
     out = make_newpost(args.title, args.ext)
+    if args.stage:
+        check_call(['git', 'add', out])
     if args.edit:
         if CONF['EDIT_CMD'] is None:
             raise RuntimeError(

@@ -45,5 +45,5 @@ def title2slug(title):
     slug = re.sub(r'^[\W]', '', slug)
     slug = re.sub(r'[\W]$', '', slug)
     slug = re.sub(r"[';:\"]", '', slug)
-    slug = re.sub(r'[\W]', '-', slug)
+    slug = re.sub(r'[\W]+', '-', slug)
     return slug
