@@ -13,17 +13,19 @@ Title: {title}
 Date: {date}
 Slug: {slug}
 Author: {author}
+Status: {status}
 {yaml_sep}
 
 """
 
 
-def make_newpost(title, ext):
+def make_newpost(title, ext, publish=False):
     date = dt.strftime(dt.today(), '%Y-%m-%d %H:%M')
     slug = title2slug(title)
     yaml_sep = '---\n' if ext == 'pdc' else ''
     post_fname = pjoin(OUTPUTDIR, f'{slug}.{ext}')
-    author=CONF['AUTHOR']
+    author = CONF['AUTHOR']
+    status = 'published' if publish else 'draft'
     contents = POST_TEMPLATE.format(**locals())
     with open(post_fname, 'wt') as fobj:
         fobj.write(contents)
@@ -41,10 +43,13 @@ def newpost_cmd():
         "-s", "--stage", action='store_true',
         help="Whether to stage the file with Git")
     parser.add_argument(
+        "-p", "--publish", action='store_true',
+        help="Mark as 'published' instead of 'draft'")
+    parser.add_argument(
         "-x", "--ext", default=CONF['DEFAULT_EXT'],
         help="Extension for post")
     args = parser.parse_args()
-    out = make_newpost(args.title, args.ext)
+    out = make_newpost(args.title, args.ext, args.publish)
     if args.stage:
         check_call(['git', 'add', out])
     if args.edit:
